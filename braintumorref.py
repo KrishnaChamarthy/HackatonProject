@@ -28,14 +28,14 @@ import sys
 
 tumor = []
 healthy = []
-for f in glob.iglob("/kaggle/input/brain-tumor/Dataset/Yes_Data/*.jpg"):
+for f in glob.iglob(r"C:\Users\ishan\Desktop\Ishan\Coding\Hackathon\Dataset\Yes_Data/*.jpg"):
     img = cv2.imread(f)
     img = cv2.resize(img,(128,128))
     b, g, r = cv2.split(img)
     img = cv2.merge([r,g,b])
     tumor.append(img)
 
-for f in glob.iglob("/kaggle/input/brain-tumor/Dataset/No_data/*.jpg"):
+for f in glob.iglob(r"C:\Users\ishan\Desktop\Ishan\Coding\Hackathon\Dataset\No_data/*.jpg"):
     img = cv2.imread(f)
     img = cv2.resize(img,(128,128)) 
     b, g, r = cv2.split(img)
@@ -75,24 +75,24 @@ np.random.choice(10, 5, replace=False)
 
 
 def plot_random(healthy, tumor, num=5):
+    if len(healthy) == 0 or len(tumor) == 0:
+        print("Not enough images for both healthy and tumor classes.")
+        return
+
     healthy_imgs = healthy[np.random.choice(healthy.shape[0], num, replace=False)]
     tumor_imgs = tumor[np.random.choice(tumor.shape[0], num, replace=False)]
-    
+
     plt.figure(figsize=(16,9))
     for i in range(num):
         plt.subplot(1, num, i+1)
         plt.title('healthy')
         plt.imshow(healthy_imgs[i])
-        
+
     plt.figure(figsize=(16,9))
     for i in range(num):
         plt.subplot(1, num, i+1)
         plt.title('tumor')
-        plt.imshow(tumor_imgs[i])
-        
-        
-
-    
+        plt.imshow(tumor_imgs[i])    
 
 
 # In[35]:
@@ -137,7 +137,7 @@ class MRI(Dataset):
         tumor = []
         healthy = []
         # cv2 - It reads in BGR format by default
-        for f in glob.iglob("/kaggle/input/brain-tumor/Dataset/Yes_Data/*.jpg"):
+        for f in glob.iglob(r"C:\Users\ishan\Desktop\Ishan\Coding\Hackathon\Dataset\Yes_Data/*.jpg"):
             img = cv2.imread(f)
             img = cv2.resize(img,(128,128)) # I can add this later in the boot-camp for more adventure
             b, g, r = cv2.split(img)
@@ -145,7 +145,7 @@ class MRI(Dataset):
             img = img.reshape((img.shape[2],img.shape[0],img.shape[1])) # otherwise the shape will be (h,w,#channels)
             tumor.append(img)
 
-        for f in glob.iglob("/kaggle/input/brain-tumor/Dataset/No_data/*.jpg"):
+        for f in glob.iglob(r"C:\Users\ishan\Desktop\Ishan\Coding\Hackathon\Dataset\No_data/*.jpg"):
             img = cv2.imread(f)
             img = cv2.resize(img,(128,128)) 
             b, g, r = cv2.split(img)
@@ -267,7 +267,7 @@ class CNN(nn.Module):
 
 
 # device will be 'cuda' if a GPU is available
-device = torch.device('cuda')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # creating a CPU tensor
 cpu_tensor = torch.rand(10).to(device)
@@ -298,7 +298,7 @@ print(cpu_tensor*gpu_tensor)
 
 mri_dataset = MRI()
 mri_dataset.normalize()
-device = torch.device('cuda:0')
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = CNN().to(device)
 
 
